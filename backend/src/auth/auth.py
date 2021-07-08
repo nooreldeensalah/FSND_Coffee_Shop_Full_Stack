@@ -63,7 +63,12 @@ def get_token_auth_header():
 
 
 def check_permissions(permission, payload):
-    raise Exception("Not Implemented")
+    permissions = payload.get("permissions", None)
+    if permissions is None:
+        raise AuthError("Bad request: No permissions exist", 400)
+    if permission not in permissions:
+        raise AuthError("Unauthorized request", 403)
+    return True
 
 
 """

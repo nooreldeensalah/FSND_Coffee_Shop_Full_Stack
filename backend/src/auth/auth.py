@@ -35,7 +35,18 @@ class AuthError(Exception):
 
 
 def get_token_auth_header():
-    raise Exception("Not Implemented")
+    auth_header = request.headers.get("Authorization", None)
+    if auth_header is None:
+        raise AuthError("Authorization header is missing", 401)
+    header_parts = auth_header.split()
+    if header_parts[0].lower() != "bearer":
+        raise AuthError("Invalid Header: must start with Bearer.", 401)
+    if len(header_parts) == 1:
+        raise AuthError("Invalid Header: Missing token", 401)
+    if len(header_parts) > 2:
+        raise AuthError("Invalid Header: Must be bearer token", 401)
+    jwt_token = header_parts[1]
+    return jwt_token
 
 
 """

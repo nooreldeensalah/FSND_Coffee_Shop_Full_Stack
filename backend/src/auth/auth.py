@@ -87,7 +87,44 @@ def check_permissions(permission, payload):
 
 
 def verify_decode_jwt(token):
-    raise Exception("Not Implemented")
+    jsonurl = urlopen(f"https://{AUTH0_DOMAIN}/.well-known/jwks.json")
+    jwks = json.loads(jsonurl.read())
+    unverified_header = jwt.get_unverified_header(token)
+    rsa_key = {}
+    if "kid" not in unverified_header:
+        raise AuthError("Invalid Header: Authorization malformed.", 401)
+
+    for key in jwks["keys"]:
+        if key["kid"] == unverified_header["kid"]:
+            rsa_key = {
+                "kty": key["kty"],
+                "kid": key["kid"],
+                "use": key["use"],
+                "n": key["n"],
+                "e": key["e"],
+            }
+    if rsa_key:
+        try:
+            payload = jwt.decode(
+                token,
+                rsa_key,
+                algorithms=ALGORITHMS,
+                audience=API_AUDIENCE,
+                issuer="https://" + AUTH0_DOMAIN + "/",
+            )
+
+            return payload
+
+        except jwt.ExpiredSignatureError:
+            raise AuthError("Error: Token Expired", 401)
+
+        except jwt.JWTClaimsError:
+            raise AuthError(
+                "Invalid claims: Please check the audience and the issuer.", 401
+            )
+        except Exception:
+            raise AuthError("Invalid Header: Unable to parse authentication token", 400)
+    raise AuthError("Invalid Header: Unable to find the appropriate key.", 400)
 
 
 """

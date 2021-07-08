@@ -49,6 +49,16 @@ def get_drinks():
 """
 
 
+@app.route("/drinks-detail")
+@requires_auth("get:drinks-detail")
+def get_drinks_details(jwt):
+    drinks = Drink.query.order_by(Drink.id).all()
+    formatted_drinks = [drink.long() for drink in drinks]
+    if len(formatted_drinks) == 0:
+        abort(404)
+    return jsonify({"success": True, "drinks": formatted_drinks})
+
+
 """
 @TODO implement endpoint
     POST /drinks

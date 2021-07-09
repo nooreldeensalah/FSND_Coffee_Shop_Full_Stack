@@ -1,3 +1,30 @@
+# Notes to the reviewer:
+
+- The project dependencies are fairly messed up, here is what I did to get it working with the help of [this topic](https://knowledge.udacity.com/questions/464138) on Udacity.
+    - I'm using `Python 3.9` and updated `requirements.txt` until I got the project in a functional state.
+    - After installing frontend dependencies, I ran the following two commands:
+        - `npm uninstall node-sass`
+        - `npm install node-sass@4.14.1`
+    
+- I have made some changes to the postman testing collection:
+    - Changed `Barista` `POST /drinks` endpoint authorization to inherit from parent.
+    - Updated the request body for `manager` `POST /drinks` endpoint because it was malformed, I made a request from the frontend, and copied it from the network tab in browser dev tools.
+- I have created two users on my auth0 domain, here are their details:
+
+### Barista
+```
+id/email : barista@example.com
+password : k?:2@(zcGXY3(aw}
+```
+
+### Manager
+
+```
+id/email: manager@example.com
+password: k?:2@(zcGXY3(aw}
+```
+- I also made sure to update the tokens and exporting them to the collection before submitting the project.
+
 # Coffee Shop Full Stack
 
 ## Full Stack Nano - IAM Final Project

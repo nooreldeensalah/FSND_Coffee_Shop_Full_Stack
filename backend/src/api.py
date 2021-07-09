@@ -84,7 +84,7 @@ def add_drink(jwt):
         recipe = json.dumps(request_body["recipe"])
         drink = Drink(title, recipe)
         drink.insert()
-        return jsonify({"success": True, "drinks": drink.long()})
+        return jsonify({"success": True, "drinks": [drink.long()]})
     except BaseException:
         abort(422)
 
@@ -100,6 +100,23 @@ def add_drink(jwt):
     returns status code 200 and json {"success": True, "drinks": drink} where drink an array containing only the updated drink
         or appropriate status code indicating reason for failure
 """
+
+
+@app.route("/drinks/<drink_id>", methods=["PATCH"])
+@requires_auth("patch:drinks")
+def update_drink(jwt, drink_id):
+    request_body = request.get_json()
+    drink = Drink.query.get(drink_id)
+    if drink is None:
+        abort(404)
+    title = request_body.get("title", None)
+    if title:
+        drink.title = json.dumps(title)
+    recipe = request_body.get("recipe", None)
+    if recipe:
+        drink.recipe = json.dumps(recipe)
+    drink.update()
+    return jsonify({"success": True, "drinks": [drink.long()]})
 
 
 """

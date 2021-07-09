@@ -70,6 +70,25 @@ def get_drinks_details(jwt):
 """
 
 
+# FIXME
+@app.route("/drinks", methods=["POST"])
+@requires_auth("post:drinks")
+def add_drink(jwt):
+    request_body = request.get_json()
+    # Check if any field is missing (either title or recipe).
+    if any([not request_body[key] for key in request_body]):
+        abort(400)
+    try:
+        # Try inserting the question.
+        title = request_body["title"]
+        recipe = json.dumps(request_body["recipe"])
+        drink = Drink(title, recipe)
+        drink.insert()
+        return jsonify({"success": True, "drinks": drink.long()})
+    except BaseException:
+        abort(422)
+
+
 """
 @TODO implement endpoint
     PATCH /drinks/<id>

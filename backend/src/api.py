@@ -70,7 +70,6 @@ def get_drinks_details(jwt):
 """
 
 
-# FIXME
 @app.route("/drinks", methods=["POST"])
 @requires_auth("post:drinks")
 def add_drink(jwt):
@@ -82,7 +81,7 @@ def add_drink(jwt):
         # Try inserting the question.
         title = request_body["title"]
         recipe = json.dumps(request_body["recipe"])
-        drink = Drink(title, recipe)
+        drink = Drink(title=title, recipe=recipe)
         drink.insert()
         return jsonify({"success": True, "drinks": [drink.long()]})
     except BaseException:
@@ -111,7 +110,7 @@ def update_drink(jwt, drink_id):
         abort(404)
     title = request_body.get("title", None)
     if title:
-        drink.title = json.dumps(title)
+        drink.title = title
     recipe = request_body.get("recipe", None)
     if recipe:
         drink.recipe = json.dumps(recipe)
